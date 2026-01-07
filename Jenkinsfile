@@ -31,15 +31,4 @@ node {
             npm run start
         """
     }
-
-    stage('Install Dependencies') {
-        dir(appDir) {
-            sh """
-                export NVM_DIR="\$HOME/.nvm"
-                . "\$NVM_DIR/nvm.sh"
-
-                npm install
-            """
-        }
-    }
 }
