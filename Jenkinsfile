@@ -39,7 +39,9 @@ node {
         npm run build
 
         sudo fuser -k 3000/tcp || true
-        nohup npm run start -- -H 0.0.0.0 -p 3000 > app.log 2>&1 &
+        pm2 delete nextjs-app || true
+        pm2 start npm --name "nextjs-app" -- start -- -H 0.0.0.0 -p 3000
+        pm2 save
     """
 }
 }
