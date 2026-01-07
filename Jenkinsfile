@@ -39,7 +39,7 @@ node {
         npm run build
 
         sudo fuser -k 3000/tcp || true
-        nohup npm run start > app.log 2>&1 &
+        nohup npm run start -- -H 0.0.0.0 > app.log 2>&1 &
     """
 }
 }
