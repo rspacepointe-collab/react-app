@@ -42,5 +42,4 @@ node {
         nohup npm run start > app.log 2>&1 &
     """
 }
-
 }
