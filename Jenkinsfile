@@ -19,18 +19,28 @@ node {
     }
 
     stage('Deploy to EC2') {
-        echo 'Deploy to EC2'
-        sh """
-            sudo mkdir -p ${appDir}
-            sudo chown -R jenkins:jenkins ${appDir}
-            rsync -av --delete
-            --exclude='.git'
-            --exclude='node_modules' ./ ${appDir}
-            cd ${appDir}
-            sudo npm install
-            sudo npm run build
-            sudo fuser -K 3000/tcp || true
-            npm run start
-        """
-    }
+    echo 'Deploy to EC2'
+    sh """
+        set -e
+
+        APP_DIR=${appDir}
+
+        sudo mkdir -p \$APP_DIR
+        sudo chown -R jenkins:jenkins \$APP_DIR
+
+        rsync -av --delete \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          ./ \$APP_DIR
+
+        cd \$APP_DIR
+
+        npm install
+        npm run build
+
+        sudo fuser -k 3000/tcp || true
+        nohup npm run start > app.log 2>&1 &
+    """
+}
+
 }
