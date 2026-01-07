@@ -1,0 +1,45 @@
+node {
+
+    def appDir = '/var/www/nextjs-app'
+    def nodeVersion = '18'
+    def appName = 'nextjs-app'
+
+    stage('Clean workspace') {
+        echo 'Cleaning jenkins workspace'
+        deleteDir()
+    }
+
+
+    stage('Clone Repo') {
+        echo 'Cloning the repo'
+        git(
+            branch: 'main',
+            url: 'https://github.com/rspacepointe-collab/react-app.git'
+        )
+    }
+
+    stage('Deploy to EC2') {
+        echo 'Deploy to EC2'
+        sh """
+            sudo mkdir -p ${appDir}
+            sudo chown -R jenkins:jenkins ${appDir}
+            rsync -av --delete --exclude='.git' --exclude='node_modules' ./ ${appDir}
+            cd ${appDir}
+            sudo npm install
+            sudo npm run build
+            sudo fuser -k 3000/tcp || true
+            npm run start
+        """
+    }
+
+    stage('Install Dependencies') {
+        dir(appDir) {
+            sh """
+                export NVM_DIR="\$HOME/.nvm"
+                . "\$NVM_DIR/nvm.sh"
+
+                npm install
+            """
+        }
+    }
+}
