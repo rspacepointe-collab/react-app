@@ -23,11 +23,13 @@ node {
         sh """
             sudo mkdir -p ${appDir}
             sudo chown -R jenkins:jenkins ${appDir}
-            rsync -av --delete --exclude='.git' --exclude='node_modules' ./ ${appDir}
+            rsync -av --delete
+            --exclude='.git'
+            --exclude='node_modules' ./ ${appDir}
             cd ${appDir}
             sudo npm install
             sudo npm run build
-            sudo fuser -k 3000/tcp || true
+            sudo fuser -K 3000/tcp || true
             npm run start
         """
     }
